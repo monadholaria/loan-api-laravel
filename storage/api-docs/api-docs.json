@@ -1,0 +1,225 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Loan Service",
+        "description": "Loan Service",
+        "contact": {
+            "email": "monadholaria@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://loans.demo:8888/api",
+            "description": "Loan API Server"
+        }
+    ],
+    "paths": {
+        "/loan": {
+            "post": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "API to create loan for autenticated user",
+                "operationId": "create",
+                "requestBody": {
+                    "description": "To request a loan, Pass loan amount and number of terms",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "amount",
+                                    "terms"
+                                ],
+                                "properties": {
+                                    "amount": {
+                                        "type": "number",
+                                        "format": "numeric",
+                                        "example": "300"
+                                    },
+                                    "terms": {
+                                        "type": "integer",
+                                        "format": "numeric",
+                                        "example": "3"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful loan created"
+                    },
+                    "400": {
+                        "description": "Fields validation errors."
+                    },
+                    "401": {
+                        "description": "User not authorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "loan/{loan}/approval": {
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Approve loan",
+                "description": "Approve loan by admin user",
+                "operationId": "approve",
+                "parameters": [
+                    {
+                        "name": "loan",
+                        "in": "path",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Loan id does not exist"
+                    },
+                    "401": {
+                        "description": "User not authorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "loan/{loan}/repayment": {
+            "put": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "To pay scheduled repayments",
+                "operationId": "repayment",
+                "parameters": [
+                    {
+                        "name": "loan",
+                        "in": "path",
+                        "description": "Loan id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Loan id does not exist"
+                    },
+                    "401": {
+                        "description": "User not authorized"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/{user}/loans": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Get loan information of user",
+                "description": "Returns loan detail of user",
+                "operationId": "userLoan",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "user id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "3"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "User not authorized"
+                    },
+                    "404": {
+                        "description": "User id does not exist"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/loans": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Get all loans",
+                "description": "For admin: Returns all loans with user detail. For customer: Return all customer specific loans",
+                "operationId": "loanList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "User authorization fail."
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "LoanService",
+            "description": "API Endpoints of Loan Service"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
